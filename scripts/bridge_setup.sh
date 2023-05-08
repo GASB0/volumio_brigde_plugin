@@ -14,8 +14,7 @@ start(){
 	ip link set dev $wiredInterface promisc on
 	ip link set dev $wiredInterface up
 
-	ip addr add $(ip addr show wlan0 | perl -wne 'm|^\s+inet (.*)/| && print $1')/32 dev
- $wiredInterface
+	ip addr add $(ip addr show wlan0 | perl -wne 'm|^\s+inet (.*)/| && print $1')/32 dev $wiredInterface
 
 	echo Setting up parprouted and dhcp-helper
 	parprouted $wiredInterface wlan0

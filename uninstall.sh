@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # Uninstall dependendencies
-# apt-get remove -y
-
+echo "Removing dependendencies"
+apt-get remove -y dhcp-helper parprouted
 
 echo "Deleting /data/plugins/system_controller"
 sudo rm -rf /data/plugins/system_controller/wired_to_wireless_bridge/
 
 echo "Performing teardown"
-source ./scripts/bridge_teardown.sh
+source ./scripts/bridge_setup.sh stop
 
 echo "Done"
 echo "pluginuninstallend"
