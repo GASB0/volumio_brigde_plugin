@@ -28,12 +28,14 @@ start(){
 stop(){
   echo 'volumio' | sudo -S bash -c "
     echo Stopping bridge
-    sudo ip addr flush dev $wiredInterface
+    ip addr flush dev $wiredInterface
+    ip addr flush dev $wirelessInterface
     kill -9 $(pidof dhcp-helper)
     kill -9 $(pidof parprouted)
     echo Disabling ip forwarding and proxy_arp
     echo 0 > /proc/sys/net/ipv4/ip_forward
     echo 0 > /proc/sys/net/ipv4/conf/all/proxy_arp
+    dhclient -v
   "
 }
 
