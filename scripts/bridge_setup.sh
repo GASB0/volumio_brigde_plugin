@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
+set -e
+
 wiredInterface='usb0'
+wirelessInterface='wlan0'
 
 start(){
   echo 'volumio' | sudo -S bash -c "
@@ -9,16 +12,16 @@ start(){
 	echo 1 > /proc/sys/net/ipv4/conf/all/proxy_arp
 
 	echo Setting up the appropriate interfaces
-	ip link set dev wlan0 promisc on
-	ip link set dev wlan0 up
+	ip link set dev $wirelessInterface promisc on
+	ip link set dev $wirelessInterface up
 	ip link set dev $wiredInterface promisc on
 	ip link set dev $wiredInterface up
 
-	ip addr add $(ip addr show wlan0 | perl -wne 'm|^\s+inet (.*)/| && print $1')/32 dev $wiredInterface
+	ip addr add $(ip addr show $wirelessInterface | perl -wne 'm|^\s+inet (.*)/| && print $1')/32 dev $wiredInterface
 
 	echo Setting up parprouted and dhcp-helper
-	parprouted $wiredInterface wlan0
-	dhcp-helper -b wlan0
+	parprouted $wiredInterface $wirelessInterface
+	dhcp-helper -b $wirelessInterface
   "
 }
 

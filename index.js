@@ -34,12 +34,17 @@ wiredToWirelessBridge.prototype.onStart = function() {
     var self = this;
 	var defer=libQ.defer();
 
-	// Testing the execution of thing on plugin's start
-	console.log("Enabling proxy arp between ethernet and wifi interfaces");
-	execSync(`sh ${__dirname}/scripts/bridge_setup.sh start`);
-
-	// Once the Plugin has successfull started resolve the promise
-	defer.resolve();
+  try{
+    console.log("Enabling proxy arp between ethernet and wifi interfaces");
+    execSync(`sh ${__dirname}/scripts/bridge_setup.sh start`);
+    defer.resolve();
+  }catch(err){
+    console.log('An error ocurred while trying to start the script.',
+    'Make sure that the usb0 and wlan0 network interfaces are available');
+    console.log(err)
+    execSync(`sh ${__dirname}/scripts/bridge_setup.sh stop`);
+    defer.reject(err);
+  }
 
     return defer.promise;
 };
@@ -48,7 +53,6 @@ wiredToWirelessBridge.prototype.onStop = function() {
     var self = this;
     var defer=libQ.defer();
 
-    // Testing the execution of thing on plugin's start
     console.log("Disabling proxy arp between ethernet and wifi interfaces");
     execSync(`sh ${__dirname}/scripts/bridge_setup.sh stop`);
 
