@@ -1,14 +1,21 @@
 #!/bin/bash
 
-# Uninstall dependendencies
-echo "Removing dependendencies"
-apt-get remove -y dhcp-helper parprouted isc-dhcp-client
+systemctl stop parprouted.service
+systemctl disable parprouted.service
 
-echo "Deleting /data/plugins/system_controller"
-sudo rm -rf /data/plugins/system_controller/wired_to_wireless_bridge/
+sudo rm /etc/systemd/network/08-wlan0.network
+sudo rm /etc/default/dhcp-helper
+sudo rm /etc/avahi/avahi-daemon.conf
+sudo rm /usr/bin/get-adapter-ip
+sudo rm /bin/parprouted_check_changes.sh
 
-echo "Performing teardown"
-source ./scripts/bridge_setup.sh stop
+sudo rm /etc/systemd/system/parprouted.service
+
+sudo apt remove parprouted dhcp-helper
+
+sudo sed -i "/.*denyinterfaces usb0.*/d" /etc/dhcpcd.conf
+echo "The line \"denyinterfaces usb0\" in the /etc/dhcpcd.conf has been removed"
+echo "this enable the action of dhcpcd in the usb0 interface"
 
 echo "Done"
 echo "pluginuninstallend"
